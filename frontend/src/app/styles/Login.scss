@@ -1,0 +1,212 @@
+.login-container {
+  width: 366px;
+  height: 532px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
+  .logo-area {
+    width: 110px;
+    height: 48px;
+    padding: 16px;
+    gap: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #0071ff26;
+
+    .logo-text {
+      width: 78px;
+      height: 20px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+      letter-spacing: 0.1px;
+      text-align: center;
+      color: #0071ff;
+    }
+  }
+
+  .login-form-title-container {
+    width: 192px;
+    height: 60px;
+    gap: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+    .welcome-text {
+      width: 192px;
+      height: 32px;
+      font-family: 'Noto Sans Thai', sans-serif;
+      font-size: 24px;
+      font-weight: 600;
+      line-height: 32px;
+      letter-spacing: 0.2px;
+      text-align: center;
+      color: #333333;
+    }
+
+    .welcome-sub-text {
+      width: 154px;
+      height: 24px;
+      font-family: 'Noto Sans Thai', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 24px;
+      letter-spacing: 0.1px;
+      text-align: center;
+      color: #b0b0b0;
+    }
+  }
+
+  .login-form-container {
+    width: 366px;
+    height: 152px;
+    gap: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .login-form-footer-container {
+      width: 366px;
+      height: 24px;
+      display: flex;
+      justify-content: end;
+
+      .remember-me-container {
+        width: 124px;
+        height: 24px;
+        gap: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .MuiButtonBase-root {
+          width: 16px;
+          height: 16px;
+          padding: 0px;
+
+          & .MuiSvgIcon-root {
+            width: 16px;
+            height: 16px;
+            // border: 1px #dbdbdb solid;
+            border-radius: 2px;
+            color: #dbdbdb;
+          }
+        }
+
+        .remember-me-text {
+          width: 100px;
+          height: 24px;
+          font-family: 'Noto Sans Thai', sans-serif;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 24px;
+          letter-spacing: 0.1px;
+          text-align: left;
+          color: #b0b0b0;
+        }
+      }
+
+      .forgot-password-text {
+        width: 73px;
+        height: 24px;
+        font-family: 'Noto Sans Thai', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 24px;
+        letter-spacing: 0.1px;
+        text-align: center;
+        color: #0071ff;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .login-button {
+    width: 366px;
+    height: 40px;
+    gap: 8px;
+    border-radius: 100px;
+    background-color: #0071ff;
+
+    .login-button-label {
+      width: 56px;
+      height: 20px;
+      font-family: 'Noto Sans Thai', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 20px;
+      letter-spacing: 0px;
+      text-align: center;
+      color: #ffffff;
+    }
+
+    &:hover {
+      box-shadow: 0px 1px 3px 1px #00000056;
+      background: #0071ff;
+    }
+
+    &:active {
+      background: #2485ff;
+      color: #ffffff;
+    }
+  }
+
+  .or-divider {
+    width: 366px;
+
+    .MuiDivider-root {
+      border: 1px solid #dbdbdb;
+    }
+
+    .MuiDivider-wrapper {
+      font-family: 'Noto Sans Thai', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 24px;
+      letter-spacing: 0.1px;
+      text-align: center;
+      color: #b0b0b0;
+    }
+  }
+
+  .activate-account-container {
+    width: 366px;
+    height: 24px;
+    gap: 8px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    .activate-account-text {
+      font-family: 'Noto Sans Thai', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 24px;
+      letter-spacing: 0.1px;
+      text-align: center;
+      color: #b0b0b0;
+    }
+
+    .activate-account-button-text {
+      width: 89px;
+      height: 24px;
+      font-family: 'Noto Sans Thai', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 24px;
+      letter-spacing: 0.1px;
+      text-align: center;
+      color: #0071ff;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+}
