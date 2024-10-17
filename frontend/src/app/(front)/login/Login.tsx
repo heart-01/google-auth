@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-// import { useNavigate } from 'react-router-dom';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { useSnackbar } from "notistack";
@@ -40,6 +39,7 @@ import { z } from "zod";
 
 // scss
 import "../../styles/Login.scss";
+import GoogleLogoutButton from "@/components/GoogleLogoutButton";
 
 interface ICredentials {
   username: string;
@@ -47,7 +47,6 @@ interface ICredentials {
 }
 
 const Login = () => {
-  //   const navigate = useNavigate();
   //   const dispatch = useAppDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -82,9 +81,7 @@ const Login = () => {
     if (passed) {
       try {
         // const user = await localLogin(credentials);
-
         // dispatch(setUser(user));
-        // navigate(``);
         reset();
       } catch (err) {
         const error = err as {
@@ -181,6 +178,8 @@ const Login = () => {
       </Divider>
 
       <GoogleLoginButton />
+
+      <GoogleLogoutButton />
     </Box>
   );
 };
