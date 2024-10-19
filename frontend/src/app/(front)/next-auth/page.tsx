@@ -9,7 +9,8 @@ export default function Home() {
     return (
       <>
         <p>สวัสดี, {session.user?.name}</p>
-        <p>ไอดีโทเค็นของคุณ: {session.id_token}</p>
+        <p>ผู้ให้บริการ, {session.user?.authProvider}</p>
+        <p>ไอดีโทเค็นของคุณ: {session.accessToken}</p>
         <button onClick={() => signOut()}>ออกจากระบบ</button>
       </>
     );
