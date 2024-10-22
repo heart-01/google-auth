@@ -28,12 +28,12 @@ enum USER_STATUS {
 model User {
   id           Int           @id @default(autoincrement())
   authProvider AUTH_PROVIDER @default(UNKNOWN) @map("auth_provider")
-  googleId     String        @unique
+  googleId     String?        @unique
   username     String        @unique @db.VarChar(100)
   password     String?       @db.VarChar(60)
   email        String        @unique @db.VarChar(100)
-  name         String        @db.VarChar(255)
-  phoneNumber  String        @map("phone_number") @db.VarChar(15)
+  name         String?        @db.VarChar(255)
+  phoneNumber  String?        @map("phone_number") @db.VarChar(15)
   status       USER_STATUS   @default(PENDING)
   createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamptz(2)
   updatedAt    DateTime      @default(now()) @map("updated_at") @db.Timestamptz(2)

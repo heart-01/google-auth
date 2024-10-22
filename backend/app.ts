@@ -5,7 +5,7 @@ import { PrismaClient } from "@prisma/client";
 import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { NextFunction } from "express-serve-static-core";
+import bcrypt from "bcrypt";
 
 dotenv.config();
 
@@ -13,6 +13,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+const router = express.Router();
 const prisma = new PrismaClient();
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID as string;
@@ -28,11 +29,6 @@ interface GoogleUserPayload {
   picture: string;
 }
 
-// config JWT Payload
-interface JwtPayload {
-  userId: number;
-}
-
 // Add user to request express
 declare module "express-serve-static-core" {
   interface Request {
@@ -40,71 +36,121 @@ declare module "express-serve-static-core" {
   }
 }
 
-// Middleware for authentication
-const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
-    if (err) return res.sendStatus(403);
-    req.user = (decoded as JwtPayload).userId;
-    next();
-  });
-};
-
 // Route for Google login
-app.post("/api/v1/auth/google", async (req: Request, res: Response) => {
-  const { token } = req.body;
+router.post(
+  "/api/v1/auth/google",
+  async (req: Request, res: Response): Promise<void> => {
+    const { token } = req.body;
 
-  try {
-    const ticket = await googleClient.verifyIdToken({
-      idToken: token,
-      audience: CLIENT_ID,
-    });
-    const payload = ticket.getPayload() as GoogleUserPayload;
+    try {
+      const ticket = await googleClient.verifyIdToken({
+        idToken: token,
+        audience: CLIENT_ID,
+      });
+      const payload = ticket.getPayload() as GoogleUserPayload;
 
-    let user = await prisma.user.findUnique({
-      where: { googleId: payload.sub },
-    });
+      let user = await prisma.user.findUnique({
+        where: { googleId: payload.sub },
+      });
 
-    if (!user) {
-      user = await prisma.user.create({
+      if (!user) {
+        user = await prisma.user.create({
+          data: {
+            authProvider: "GOOGLE",
+            googleId: payload.sub,
+            username: payload.email,
+            email: payload.email,
+            name: payload.name,
+          },
+        });
+      }
+
+      const accessToken = jwt.sign({ userId: user.id }, JWT_SECRET, {
+        expiresIn: "1h",
+      });
+
+      res.json({ accessToken, user });
+    } catch (error) {
+      console.error("Error during authentication:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+);
+
+// Route for Local SignUp
+router.post(
+  "/api/v1/auth/local/signup",
+  async (req: Request, res: Response): Promise<void> => {
+    const { email, username, password } = req.body;
+
+    try {
+      const existingUser = await prisma.user.findUnique({
+        where: { email, authProvider: "LOCAL" },
+      });
+
+      if (existingUser) {
+        res.status(400).json({ message: "Email is already in use" });
+        return;
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = await prisma.user.create({
         data: {
-          authProvider: "GOOGLE",
-          googleId: payload.sub,
-          username: payload.email,
-          email: payload.email,
-          name: payload.name,
-          phoneNumber: "",
+          authProvider: "LOCAL",
+          username,
+          email,
+          password: hashedPassword,
         },
       });
+
+      const accessToken = jwt.sign({ userId: user.id }, JWT_SECRET, {
+        expiresIn: "1h",
+      });
+
+      res.json({ accessToken, user });
+    } catch (error) {
+      console.error("Error during sign up:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+);
+
+// Route for Local SignIn
+router.post(
+  "/api/v1/auth/local/signup",
+  async (req: Request, res: Response): Promise<void> => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      res.status(401).json({ message: "Invalid email or password" });
+      return;
     }
 
-    const accessToken = jwt.sign({ userId: user.id }, JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    try {
+      // Find user by email
+      const user = await prisma.user.findUnique({
+        where: { email, authProvider: "LOCAL" },
+      });
+      if (!user || !user.password) {
+        res.status(401).json({ message: "Invalid email or password" });
+        return;
+      }
 
-    res.json({ accessToken, user });
-  } catch (error) {
-    console.error("Error during authentication:", error);
-    res.status(401).json({ message: "Invalid token" });
-  }
-});
+      // Check password
+      const isValidPassword = await bcrypt.compare(password, user.password);
+      if (!isValidPassword) {
+        res.status(401).json({ message: "Invalid email or password" });
+        return;
+      }
 
-// Route for protected route
-app.get(
-  "/api/v1/protected-route",
-  authenticateToken,
-  async (req: Request, res: Response) => {
-    const userId = req.user;
-    if (!userId) return res.sendStatus(401);
+      const accessToken = jwt.sign({ userId: user.id }, JWT_SECRET, {
+        expiresIn: "1h",
+      });
 
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
-    res.json({ message: "This is a protected route", user });
+      res.json({ accessToken, user });
+    } catch (error) {
+      console.error("Error during sign up:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
   }
 );
 
