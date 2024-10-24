@@ -6,6 +6,7 @@ import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
+import { sendEmail } from "./utils/sendEmail";
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use(bodyParser.json());
 const router = express.Router();
 const prisma = new PrismaClient();
 
+const PORT = process.env.PORT || 3030;
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID as string;
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -103,6 +105,12 @@ router.post(
         },
       });
 
+      await sendEmail(
+        email,
+        "Welcome to Our Service",
+        `Hello ${username},\n\nThank you for signing up!`
+      );
+
       const accessToken = jwt.sign({ userId: user.id }, JWT_SECRET, {
         expiresIn: "1h",
       });
@@ -154,7 +162,7 @@ router.post(
   }
 );
 
-const PORT = process.env.PORT || 3030;
+app.use(router);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
