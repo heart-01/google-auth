@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { getServerSession } from "next-auth";
 import SessionProvider from "@/components/SessionProvider";
 
 export const metadata: Metadata = {
@@ -12,6 +11,5 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession();
-  return <SessionProvider session={session}>{children}</SessionProvider>;
+  return <SessionProvider>{children}</SessionProvider>;
 }
